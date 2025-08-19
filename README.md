@@ -45,6 +45,67 @@ anypoint-studio-mastery/
 | **API Development** | Weeks 21-24 | REST APIs & APIKit | [4 exercises](exercises/phase-5/) |
 | **Enterprise Patterns** | Weeks 25-28 | Security & Best Practices | [4 exercises](exercises/phase-6/) |
 
+
+## 🗺️ Learning Path
+
+### Phase 1: Studio Fundamentals (Weeks 1-4)
+
+| Level | Topic | Key Skills |
+|-------|-------|------------|
+| 1 | Studio Installation & Setup | Install Studio, configure workspace |
+| 2 | Project Structure & Maven | Understand Mule projects, Maven dependencies |
+| 3 | Studio Interface | Navigate Studio, use palette and canvas |
+| 4 | Local Testing & Debugging | Run applications, monitor logs |
+
+### Phase 2: Core Development (Weeks 5-10)
+
+| Level | Topic | Key Skills |
+|-------|-------|------------|
+| 5 | Mule Message & Flows | Message structure, flow design |
+| 6 | Core Components | Logger, Set Payload, Transform Message |
+| 7 | DataWeave Transformations | JSON/XML transformations, expressions |
+| 8 | Flow Controls | Choice router, For Each, Scatter-Gather |
+| 9 | Error Handling | Try/catch, error types, exception strategies |
+| 10 | Configuration Management | Properties, variables, environments |
+
+### Phase 3: Connectors (Weeks 11-16)
+
+| Level | Topic | Key Skills |
+|-------|-------|------------|
+| 11 | HTTP Connector | REST APIs, HTTP methods, headers |
+| 12 | Database Connector | CRUD operations, connection pooling |
+| 13 | File & FTP Connectors | File operations, polling, batch processing |
+| 14 | Salesforce Connector | CRM integration, authentication |
+| 15 | JMS & Message Queues | Asynchronous messaging, ActiveMQ |
+| 16 | Custom Connectors | Build custom connectors using SDK |
+
+### Phase 4: Advanced Features (Weeks 17-20)
+
+| Level | Topic | Key Skills |
+|-------|-------|------------|
+| 17 | MUnit Testing | Unit tests, mocking, assertions |
+| 18 | Performance Optimization | Profiling, tuning, monitoring |
+| 19 | Version Control | Git integration, collaboration |
+| 20 | Deployment & Packaging | Export apps, deployment preparation |
+
+### Phase 5: API Development (Weeks 21-24)
+
+| Level | Topic | Key Skills |
+|-------|-------|------------|
+| 21 | RAML & APIKit | API design, scaffolding |
+| 22 | REST API Development | HTTP semantics, proper API design |
+| 23 | Code Generation | Scaffolding, template customization |
+| 24 | Mock Services | Contract testing, API mocking |
+
+### Phase 6: Enterprise Patterns (Weeks 25-28)
+
+| Level | Topic | Key Skills |
+|-------|-------|------------|
+| 25 | Integration Patterns | Enterprise patterns, reusable components |
+| 26 | Security Implementation | Authentication, authorization, encryption |
+| 27 | Environment Management | Multi-env configs, property externalization |
+| 28 | Best Practices | Code quality, standards, architecture |
+
 ## 🏗️ Featured Projects
 
 Real-world implementations demonstrating enterprise-grade MuleSoft solutions:
@@ -94,7 +155,7 @@ Gradual migration from monolith to microservices
 ### Getting Started
 ```bash
 # Clone the repository
-git clone https://github.com/ilyasseyounes1/Anypoint-Studio-Projects.git
+git clone https://github.com/yourusername/anypoint-studio-mastery.git
 cd anypoint-studio-mastery
 
 # Start with fundamentals
@@ -246,9 +307,9 @@ This learning path aligns with official MuleSoft certifications:
 
 - 💬 **Discussions:** Use GitHub Discussions for questions
 - 🐛 **Issues:** Report bugs via GitHub Issues  
-- 📧 **Email:** [your-email@domain.com] for direct contact
-- 🌐 **Blog:** [your-blog-url] for latest updates and tutorials
-- 📱 **Social:** Follow [@yourhandle] for MuleSoft tips
+- 📧 **Email:** [ilyasseyounes1@gamil.com] for direct contact
+- 🌐 **Blog:** [***] for latest updates and tutorials
+- 📱 **Social:** Follow [www.linkedin.com/in/ilyasse-younes] for MuleSoft tips
 
 ## 📄 License
 
