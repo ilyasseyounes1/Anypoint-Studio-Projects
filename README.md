@@ -1,315 +1,345 @@
-# Anypoint Studio Mastery Hub
+# 🚀 MuleSoft Anypoint Studio Mastery Hub
 
-[![Anypoint Studio](https://img.shields.io/badge/Anypoint%20Studio-7.x-blue.svg)](https://www.mulesoft.com/platform/studio)
-[![MuleSoft](https://img.shields.io/badge/MuleSoft-Certified-orange.svg)](https://training.mulesoft.com/certification)
-[![Projects](https://img.shields.io/badge/Projects-15+-green.svg)](projects/)
-[![Exercises](https://img.shields.io/badge/Exercises-28-purple.svg)](exercises/)
-[![Hands On](https://img.shields.io/badge/Type-Hands%20On-red.svg)](README.md)
-[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Stars](https://img.shields.io/github/stars/yourusername/anypoint-studio-mastery?style=social)](https://github.com/yourusername/anypoint-studio-mastery)
+<div align="center">
 
-**A complete MuleSoft Anypoint Studio learning ecosystem with structured roadmap, hands-on exercises, and real-world projects.**
+![MuleSoft](https://img.shields.io/badge/MuleSoft-Anypoint%20Studio-00A2E4?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K)
 
-## 🚀 What's Inside
+[![Anypoint Studio](https://img.shields.io/badge/Anypoint%20Studio-v7.x-00A2E4?style=for-the-badge&logo=mulesoft&logoColor=white)](https://www.mulesoft.com/platform/studio)
+[![Mule Runtime](https://img.shields.io/badge/Mule%20Runtime-4.x-FF6B35?style=for-the-badge&logo=mulesoft&logoColor=white)](https://docs.mulesoft.com/mule-runtime/)
+[![Projects](https://img.shields.io/badge/Projects-15+-9B59B6?style=for-the-badge&logo=github&logoColor=white)](#-featured-projects)
+[![Learning Path](https://img.shields.io/badge/Learning%20Levels-20-27AE60?style=for-the-badge&logo=star&logoColor=white)](#-learning-roadmap)
 
-This repository combines **structured learning** with **practical implementation** to take you from MuleSoft beginner to expert developer.
+**🎯 Master Anypoint Studio Development | Build Enterprise Integration Solutions | Showcase Your Mule Skills**
 
-- 📚 **28-Week Learning Roadmap** - Systematic progression path
-- 💻 **Hands-On Exercises** - Practice projects for each level  
-- 🏗️ **Real-World Projects** - Production-ready implementations
-- 📖 **Best Practices Guide** - Industry standards and patterns
-- 🛠️ **Templates & Tools** - Accelerate your development
+[🚀 Quick Start](#-quick-start) • [📚 Learning Path](#-learning-roadmap) • [🏗️ Projects](#-featured-projects) • [🤝 Contribute](#-contributing)
+
+</div>
+
+---
+
+## 🎯 What You'll Master
+
+<table>
+<tr>
+<td align="center" width="33%">
+<img src="https://img.icons8.com/color/96/000000/api-settings.png" alt="Flow Development"/><br/>
+<strong>🔄 Flow Development</strong><br/>
+Build robust integration flows with connectors, transformers, and error handling
+</td>
+<td align="center" width="33%">
+<img src="https://img.icons8.com/color/96/000000/database.png" alt="Data Integration"/><br/>
+<strong>🗃️ Data Integration</strong><br/>
+Connect databases, APIs, files, and enterprise systems seamlessly
+</td>
+<td align="center" width="33%">
+<img src="https://img.icons8.com/color/96/000000/error.png" alt="Error Handling"/><br/>
+<strong>⚠️ Error Handling</strong><br/>
+Implement comprehensive error handling and monitoring strategies
+</td>
+</tr>
+</table>
 
 ## 📁 Repository Structure
 
 ```
 anypoint-studio-mastery/
-├── 📚 exercises/           # Level-by-level practice exercises
-├── 🏗️ projects/            # Complete real-world implementations
-├── 📖 resources/           # Documentation, guides, and templates
-├── 🛠️ tools/               # Utilities and helper scripts
-└── 📋 docs/               # Additional documentation
+│
+├── 📚 learning-journey/              # Progressive skill building
+│   ├── phase-1-fundamentals/        # Basic Studio concepts & first flows  
+│   ├── phase-2-core-patterns/       # Core integration patterns & connectors
+│   ├── phase-3-advanced/            # Advanced patterns & error handling
+│   ├── phase-4-enterprise/          # Enterprise solutions & best practices
+│   ├── phase-5-performance/         # Performance optimization & monitoring
+│   └── phase-6-certification/       # MCD/MCIA preparation materials
+│
+├── 🏗️ projects/                      # Complete integration solutions
+│   ├── ecommerce-integration/        # E-commerce platform project
+│   ├── banking-api-gateway/          # Financial services gateway
+│   ├── data-analytics-pipeline/      # Real-time analytics processing
+│   ├── microservices-orchestration/  # Event-driven microservices
+│   ├── legacy-modernization/         # System modernization project
+│   └── connector-showcase/           # Connector-specific implementations
+│
+├── 🛠️ templates/                     # Reusable project templates
+│   ├── starter-templates/            # Quick start project skeletons
+│   ├── connector-templates/          # Pre-configured connector setups
+│   ├── error-handling-patterns/      # Error handling templates
+│   └── best-practices/               # Industry standard implementations
+│
+├── 📚 lib/                          # Reusable libraries & utilities
+│   ├── mule-utils/                  # Common Mule utility functions
+│   ├── validation-modules/          # Data validation components
+│   ├── performance-optimizers/      # Performance enhancement modules
+│   └── testing-frameworks/          # MUnit testing utilities
+│
+├── 🔧 configurations/                # Common configurations & utilities
+│   ├── global-elements/             # Reusable global configurations
+│   ├── properties/                  # Environment-specific configs
+│   ├── deployment/                  # Deployment scripts & guides
+│   └── monitoring/                  # Monitoring & logging configurations
+│
+├── 📊 case-studies/                 # Real-world implementation studies
+│   ├── fraud-detection-pipeline/    # Banking fraud detection system
+│   ├── data-harmonization/          # Multi-format data integration
+│   └── real-time-analytics/         # Streaming analytics implementation
+│
+└── 📖 docs/                         # Comprehensive documentation
+    ├── guides/                      # Step-by-step tutorials
+    ├── troubleshooting/             # Common issues & solutions
+    ├── resources/                   # Additional learning materials
+    └── certifications/              # Professional credential tracking
 ```
 
-## 🎯 Learning Path Overview
+## 🗺️ Learning Roadmap
 
-### 📚 Structured Learning (28 Levels)
+<details>
+<summary><strong>🌱 Phase 1: Foundations (Weeks 1-4)</strong></summary>
 
-| Phase | Duration | Focus Area | Exercises |
-|-------|----------|------------|-----------|
-| **Fundamentals** | Weeks 1-4 | Studio Setup & Basics | [4 exercises](exercises/phase-1/) |
-| **Core Development** | Weeks 5-10 | Message Processing & Flows | [6 exercises](exercises/phase-2/) |
-| **Connectors** | Weeks 11-16 | Integration Components | [6 exercises](exercises/phase-3/) |
-| **Advanced Features** | Weeks 17-20 | Testing & Optimization | [4 exercises](exercises/phase-4/) |
-| **API Development** | Weeks 21-24 | REST APIs & APIKit | [4 exercises](exercises/phase-5/) |
-| **Enterprise Patterns** | Weeks 25-28 | Security & Best Practices | [4 exercises](exercises/phase-6/) |
+| Week | 🎯 Focus | 🛠️ Skills | 📋 Deliverables |
+|------|----------|-----------|------------------|
+| 1 | Studio Basics | IDE navigation, project structure | Hello World Mule App |
+| 2 | HTTP & Core | HTTP listener/request, transforms | REST API consumer |
+| 3 | File Operations | File connector, batch processing | CSV to JSON converter |
+| 4 | Error Handling | Try/catch, error types | Robust error handling flow |
 
+</details>
 
-## 🗺️ Learning Path
+<details>
+<summary><strong>🌿 Phase 2: Integration Patterns (Weeks 5-10)</strong></summary>
 
-### Phase 1: Studio Fundamentals (Weeks 1-4)
+| Week | 🎯 Focus | 🛠️ Skills | 📋 Deliverables |
+|------|----------|-----------|------------------|
+| 5 | Database Integration | Database connector, CRUD operations | Employee management system |
+| 6 | Message Routing | Choice router, scatter-gather | Content-based routing |
+| 7 | Data Transformation | DataWeave advanced features | Complex data mapping |
+| 8 | Async Processing | VM connector, async scopes | Event-driven architecture |
+| 9 | Web Services | SOAP connector, WSDL consumption | Legacy system integration |
+| 10 | Message Enrichment | Lookup tables, cache scope | Data enrichment patterns |
 
-| Level | Topic | Key Skills |
-|-------|-------|------------|
-| 1 | Studio Installation & Setup | Install Studio, configure workspace |
-| 2 | Project Structure & Maven | Understand Mule projects, Maven dependencies |
-| 3 | Studio Interface | Navigate Studio, use palette and canvas |
-| 4 | Local Testing & Debugging | Run applications, monitor logs |
+</details>
 
-### Phase 2: Core Development (Weeks 5-10)
+<details>
+<summary><strong>🌳 Phase 3: Enterprise Solutions (Weeks 11-16)</strong></summary>
 
-| Level | Topic | Key Skills |
-|-------|-------|------------|
-| 5 | Mule Message & Flows | Message structure, flow design |
-| 6 | Core Components | Logger, Set Payload, Transform Message |
-| 7 | DataWeave Transformations | JSON/XML transformations, expressions |
-| 8 | Flow Controls | Choice router, For Each, Scatter-Gather |
-| 9 | Error Handling | Try/catch, error types, exception strategies |
-| 10 | Configuration Management | Properties, variables, environments |
+| Week | 🎯 Focus | 🛠️ Skills | 📋 Deliverables |
+|------|----------|-----------|------------------|
+| 11 | Salesforce Integration | Salesforce connector mastery | CRM synchronization |
+| 12 | Batch Processing | Batch job, aggregators | Large dataset processing |
+| 13 | Security Implementation | OAuth, JWT, encryption | Secure API gateway |
+| 14 | Monitoring & Logging | Custom business events | Production monitoring |
+| 15 | Performance Optimization | Connection pooling, caching | High-performance flows |
+| 16 | Testing Strategies | MUnit testing framework | Comprehensive test suites |
 
-### Phase 3: Connectors (Weeks 11-16)
-
-| Level | Topic | Key Skills |
-|-------|-------|------------|
-| 11 | HTTP Connector | REST APIs, HTTP methods, headers |
-| 12 | Database Connector | CRUD operations, connection pooling |
-| 13 | File & FTP Connectors | File operations, polling, batch processing |
-| 14 | Salesforce Connector | CRM integration, authentication |
-| 15 | JMS & Message Queues | Asynchronous messaging, ActiveMQ |
-| 16 | Custom Connectors | Build custom connectors using SDK |
-
-### Phase 4: Advanced Features (Weeks 17-20)
-
-| Level | Topic | Key Skills |
-|-------|-------|------------|
-| 17 | MUnit Testing | Unit tests, mocking, assertions |
-| 18 | Performance Optimization | Profiling, tuning, monitoring |
-| 19 | Version Control | Git integration, collaboration |
-| 20 | Deployment & Packaging | Export apps, deployment preparation |
-
-### Phase 5: API Development (Weeks 21-24)
-
-| Level | Topic | Key Skills |
-|-------|-------|------------|
-| 21 | RAML & APIKit | API design, scaffolding |
-| 22 | REST API Development | HTTP semantics, proper API design |
-| 23 | Code Generation | Scaffolding, template customization |
-| 24 | Mock Services | Contract testing, API mocking |
-
-### Phase 6: Enterprise Patterns (Weeks 25-28)
-
-| Level | Topic | Key Skills |
-|-------|-------|------------|
-| 25 | Integration Patterns | Enterprise patterns, reusable components |
-| 26 | Security Implementation | Authentication, authorization, encryption |
-| 27 | Environment Management | Multi-env configs, property externalization |
-| 28 | Best Practices | Code quality, standards, architecture |
+</details>
 
 ## 🏗️ Featured Projects
 
-Real-world implementations demonstrating enterprise-grade MuleSoft solutions:
-
-### 🛒 [E-Commerce Integration Platform](projects/ecommerce-platform/)
+### 🛒 **E-Commerce Integration Platform**
 Complete omnichannel integration solution
-- **APIs:** Customer, Product, Order, Inventory
-- **Connectors:** Salesforce, SAP, MySQL, MongoDB
-- **Features:** Real-time sync, error handling, monitoring
-- **Tech:** RAML, DataWeave, MUnit, Security policies
+* **APIs:** Customer, Product, Order, Inventory
+* **Connectors:** Salesforce, SAP, MySQL, MongoDB
+* **Features:** Real-time sync, error handling, monitoring
+* **Tech:** RAML, DataWeave, MUnit, Security policies
 
-### 🏦 [Banking API Gateway](projects/banking-gateway/)
+### 🏦 **Banking API Gateway**  
 Secure financial services API gateway
-- **Security:** OAuth 2.0, JWT, Client ID enforcement
-- **APIs:** Account, Transaction, Payment processing
-- **Compliance:** PCI DSS, audit trails, encryption
-- **Performance:** Rate limiting, caching, monitoring
+* **Security:** OAuth 2.0, JWT, Client ID enforcement
+* **APIs:** Account, Transaction, Payment processing
+* **Compliance:** PCI DSS, audit trails, encryption
+* **Performance:** Rate limiting, caching, monitoring
 
-### 📊 [Data Analytics Pipeline](projects/analytics-pipeline/)
+### 📊 **Data Analytics Pipeline**
 Real-time data processing and analytics
-- **Sources:** REST APIs, Files, Databases, JMS
-- **Processing:** Batch & stream processing patterns
-- **Destinations:** Data lake, warehouse, dashboards
-- **Monitoring:** Performance metrics, alerts
+* **Sources:** REST APIs, Files, Databases, JMS
+* **Processing:** Batch & stream processing patterns
+* **Destinations:** Data lake, warehouse, dashboards
+* **Monitoring:** Performance metrics, alerts
 
-### 🔄 [Microservices Orchestration](projects/microservices-orchestrator/)
+### 🔄 **Microservices Orchestration**
 Event-driven microservices coordination
-- **Patterns:** Saga, Circuit breaker, Event sourcing
-- **Messaging:** ActiveMQ, pub/sub patterns
-- **Resilience:** Retry policies, fallback mechanisms
-- **Observability:** Distributed tracing, metrics
+* **Patterns:** Saga, Circuit breaker, Event sourcing
+* **Messaging:** ActiveMQ, pub/sub patterns
+* **Resilience:** Retry policies, fallback mechanisms
+* **Observability:** Distributed tracing, metrics
 
-### 🌐 [Legacy System Modernization](projects/legacy-modernization/)
+### 🌐 **Legacy System Modernization**
 Gradual migration from monolith to microservices
-- **Strategy:** Strangler fig pattern implementation
-- **Integration:** SOAP to REST transformation
-- **Data:** ETL processes, data synchronization
-- **Migration:** Phased approach with rollback capability
+* **Strategy:** Strangler fig pattern implementation
+* **Integration:** SOAP to REST transformation
+* **Data:** ETL processes, data synchronization
+* **Migration:** Phased approach with rollback capability
 
-## 💻 Quick Start
+## 💡 Quick Start
 
-### Prerequisites
-- Java 8 or 11
-- Anypoint Studio 7.x
-- Git
+### Prerequisites Checklist
+- [ ] ☕ Java 8 or 11 installed
+- [ ] 🛠️ Anypoint Studio downloaded
+- [ ] 🔑 Anypoint Platform account (free trial)
+- [ ] 📊 Basic understanding of APIs and HTTP
 
-### Getting Started
+### 🚀 Get Started in 3 Steps
+
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/anypoint-studio-mastery.git
+# 1. Clone this repository
+git clone https://github.com/yourusername/Anypoint-Studio-Projects.git
 cd anypoint-studio-mastery
 
-# Start with fundamentals
-cd exercises/level-01-studio-setup
-# Follow the README in each exercise folder
+# 2. Open Anypoint Studio and import first project
+File > Import > Anypoint Studio > Anypoint Studio Project from File System
+Select: projects/basic-examples/01-hello-world-mule-app
 
-# Or jump to a specific project
-cd projects/ecommerce-platform
-# Import into Studio and follow project README
+# 3. Run your first Mule application
+Right-click project > Run As > Mule Application
 ```
 
-### Learning Path Options
+### 🎯 Choose Your Learning Path
 
-**🎓 Structured Learning** (Recommended for beginners)
-```bash
-# Follow the 28-week roadmap
-cd exercises/level-01-studio-setup
-# Complete each level sequentially
-```
+<table>
+<tr>
+<td align="center">
+<img src="https://img.icons8.com/color/48/000000/student-male.png"/><br/>
+<strong>📚 Beginner Path</strong><br/>
+<em>New to Mule?</em><br/>
+Start with fundamentals
+<br/><br/>
+<a href="learning-journey/fundamentals/">Begin Learning →</a>
+</td>
+<td align="center">
+<img src="https://img.icons8.com/color/48/000000/developer.png"/><br/>
+<strong>🔧 Developer Path</strong><br/>
+<em>Have experience?</em><br/>
+Jump to integration patterns
+<br/><br/>
+<a href="projects/integration-patterns/">View Patterns →</a>
+</td>
+<td align="center">
+<img src="https://img.icons8.com/color/48/000000/business.png"/><br/>
+<strong>🏢 Enterprise Path</strong><br/>
+<em>Building production apps?</em><br/>
+Explore enterprise solutions
+<br/><br/>
+<a href="projects/enterprise-solutions/">See Solutions →</a>
+</td>
+</tr>
+</table>
 
-**🏗️ Project-Based Learning** (For experienced developers)
-```bash
-# Pick a project that matches your interests
-cd projects/banking-gateway
-# Study and implement the solution
-```
+## 📈 Skills Progression Tracker
 
-**🔍 Topic-Specific Learning**
-```bash
-# Focus on specific areas
-cd exercises/dataweave-transformations  # Data transformation
-cd exercises/security-implementation    # Security patterns
-cd exercises/performance-optimization   # Performance tuning
-```
+Track your journey with our comprehensive skill assessment:
 
-## 📊 Progress Tracking
+### 🌱 **Beginner Level** (Projects 1-5)
+**Progress:** ⬜⬜⬜⬜⬜ (0/5 completed)
+- [ ] Create basic HTTP listener and request flows
+- [ ] Implement simple data transformations using DataWeave
+- [ ] Configure file operations (read, write, move)
+- [ ] Add basic error handling with try-catch scopes
+- [ ] Deploy and test applications locally
 
-Track your learning journey:
+### 🌿 **Intermediate Level** (Projects 6-12)
+**Progress:** ⬜⬜⬜⬜⬜⬜⬜ (0/7 completed)
+- [ ] Build database CRUD operations with proper connection pooling
+- [ ] Implement message routing patterns (choice, scatter-gather)
+- [ ] Create complex DataWeave transformations and functions
+- [ ] Develop async processing flows with VM connector
+- [ ] Integrate with SOAP web services and handle WSDLs
+- [ ] Implement caching strategies for performance optimization
+- [ ] Build comprehensive error handling with custom error types
 
-### Phase 1: Fundamentals ⬜⬜⬜⬜
-- [ ] [Level 1: Studio Setup](exercises/level-01/)
-- [ ] [Level 2: Project Structure](exercises/level-02/)  
-- [ ] [Level 3: Interface Navigation](exercises/level-03/)
-- [ ] [Level 4: Local Testing](exercises/level-04/)
+### 🌳 **Advanced Level** (Projects 13-20)
+**Progress:** ⬜⬜⬜⬜⬜⬜⬜⬜ (0/8 completed)
+- [ ] Master Salesforce connector for complex CRM integrations
+- [ ] Implement batch processing for large dataset operations
+- [ ] Build secure flows with OAuth, JWT, and encryption
+- [ ] Create custom business events and monitoring dashboards
+- [ ] Optimize application performance with advanced techniques
+- [ ] Develop comprehensive MUnit test suites
+- [ ] Implement enterprise integration patterns
+- [ ] Build production-ready applications with full CI/CD pipeline
 
-### Phase 2: Core Development ⬜⬜⬜⬜⬜⬜
-- [ ] [Level 5: Message & Flows](exercises/level-05/)
-- [ ] [Level 6: Core Components](exercises/level-06/)
-- [ ] [Level 7: DataWeave](exercises/level-07/)
-- [ ] [Level 8: Flow Controls](exercises/level-08/)
-- [ ] [Level 9: Error Handling](exercises/level-09/)
-- [ ] [Level 10: Configuration](exercises/level-10/)
+## 🛠️ Development Resources
 
-### Real-World Projects ⬜⬜⬜⬜⬜
-- [ ] [E-Commerce Platform](projects/ecommerce-platform/)
-- [ ] [Banking API Gateway](projects/banking-gateway/)
-- [ ] [Analytics Pipeline](projects/analytics-pipeline/)
-- [ ] [Microservices Orchestrator](projects/microservices-orchestrator/)
-- [ ] [Legacy Modernization](projects/legacy-modernization/)
+### 📦 **Project Templates**
+- 🚀 [Starter Template](templates/starter-templates/) - Clean project structure
+- 🔌 [Connector Templates](templates/connector-templates/) - Pre-configured connectors
+- ✅ [Best Practices Template](templates/best-practices/) - Enterprise standards
 
-## 🛠️ Tools & Resources
+### 🔧 **Configuration Library**
+- 🌍 [Environment Properties](configurations/properties/) - Multi-env configurations
+- 🔗 [Global Elements](configurations/global-elements/) - Reusable components
+- 🚀 [Deployment Scripts](configurations/deployment/) - Automated deployment
 
-### Development Tools
-- [Studio Project Templates](tools/templates/) - Quick-start templates
-- [Code Quality Checkers](tools/quality/) - Linting and validation
-- [Performance Profilers](tools/performance/) - Optimization helpers
-- [Testing Utilities](tools/testing/) - MUnit helpers and mocks
+### 📚 **Learning Resources**
+- 📖 [Comprehensive Guides](docs/guides/) - Step-by-step tutorials
+- 🔍 [Troubleshooting](docs/troubleshooting/) - Common issues solved
+- 📋 [Cheat Sheets](docs/resources/) - Quick reference materials
 
-### Documentation
-- [Best Practices Guide](resources/best-practices.md)
-- [Troubleshooting Guide](resources/troubleshooting.md)
-- [Design Patterns](resources/patterns.md)
-- [Security Checklist](resources/security-checklist.md)
-- [Performance Optimization](resources/performance-guide.md)
+## 🎓 Certification Alignment
 
-### Learning Resources
-- [Cheat Sheets](resources/cheat-sheets/) - Quick reference guides
-- [Video Tutorials](resources/videos.md) - Curated video content
-- [External Links](resources/links.md) - Official docs and tutorials
-- [Certification Prep](resources/certification/) - Exam preparation materials
+This repository aligns with MuleSoft certification paths:
 
-## 🏆 Skill Assessment
-
-### Beginner (Levels 1-10) 🌱
-✅ Can create basic Mule applications  
-✅ Understands message structure and flows  
-✅ Implements simple transformations  
-✅ Basic error handling and debugging
-
-**Recommended Projects:** [Hello World API](exercises/level-01/), [Simple CRUD API](exercises/level-08/)
-
-### Intermediate (Levels 11-20) 🌿  
-✅ Masters multiple connectors  
-✅ Writes comprehensive tests  
-✅ Implements complex routing logic  
-✅ Performance optimization basics
-
-**Recommended Projects:** [E-Commerce Integration](projects/ecommerce-platform/), [Data Pipeline](projects/analytics-pipeline/)
-
-### Advanced (Levels 21-28) 🌳
-✅ Designs enterprise APIs  
-✅ Implements security patterns  
-✅ Masters advanced integration patterns  
-✅ Follows architecture best practices
-
-**Recommended Projects:** [Banking Gateway](projects/banking-gateway/), [Microservices Orchestrator](projects/microservices-orchestrator/)
+<table>
+<tr>
+<td align="center" width="50%">
+<img src="https://img.icons8.com/color/64/000000/certificate.png"/><br/>
+<strong>🏆 MuleSoft Certified Developer (MCD)</strong><br/>
+Levels 1-16 prepare you for MCD certification<br/>
+<em>Focus: Core development skills, connectors, testing</em>
+</td>
+<td align="center" width="50%">
+<img src="https://img.icons8.com/color/64/000000/graduation-cap.png"/><br/>
+<strong>🎖️ MuleSoft Certified Integration Architect (MCIA)</strong><br/>
+Levels 17-20 advance toward MCIA certification<br/>
+<em>Focus: Architecture patterns, performance, enterprise design</em>
+</td>
+</tr>
+</table>
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how to get involved:
+We welcome contributions to expand this learning ecosystem!
 
-### Ways to Contribute
-- 🐛 **Report Issues** - Found a bug or error?
-- 💡 **Suggest Features** - Have ideas for new exercises or projects?
-- 📝 **Improve Documentation** - Help make instructions clearer
-- 💻 **Add Projects** - Share your MuleSoft implementations
-- 🎓 **Create Exercises** - Design new learning activities
+### 🎯 **Ways to Contribute**
+- 🐛 **Report Bugs** - Found issues in projects or documentation?
+- 💡 **Suggest Projects** - Ideas for new integration examples?
+- 📝 **Improve Docs** - Help make guides clearer and more comprehensive
+- 🏗️ **Add Projects** - Share your Mule applications and patterns
+- 🧪 **Testing** - Contribute MUnit tests and quality improvements
 
-### Contribution Process
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### 📋 **Contribution Guidelines**
+1. 🍴 Fork the repository
+2. 🌿 Create feature branch (`git checkout -b feature/awesome-integration`)
+3. 📝 Follow coding standards and documentation templates
+4. ✅ Add comprehensive README for new projects
+5. 🧪 Include MUnit tests where applicable
+6. 💬 Commit with clear messages (`git commit -m 'Add customer sync integration'`)
+7. 📤 Push and create Pull Request
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+## 📊 Repository Statistics
 
-## 📈 Repository Stats
+<div align="center">
 
-- **⭐ Stars:** Growing community of MuleSoft learners
-- **🍴 Forks:** Active contributions and customizations  
-- **📚 Exercises:** 28 hands-on learning activities
-- **🏗️ Projects:** 5+ production-ready implementations
-- **📖 Documentation:** Comprehensive guides and references
-- **🔄 Updates:** Regularly maintained and improved
+![GitHub stars](https://img.shields.io/github/stars/yourusername/anypoint-studio-mastery?style=social)
+![GitHub forks](https://img.shields.io/github/forks/yourusername/anypoint-studio-mastery?style=social)
+![GitHub issues](https://img.shields.io/github/issues/yourusername/anypoint-studio-mastery)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/anypoint-studio-mastery)
 
-## 🎖️ Certification Alignment
+**📈 20 Integration Projects** • **🎓 4-Phase Learning Path** • **🛠️ 15+ Templates** • **📚 Comprehensive Documentation**
 
-This learning path aligns with official MuleSoft certifications:
+</div>
 
-| Certification | Levels | Projects | Focus Area |
-|--------------|---------|----------|-----------|
-| **MCD Level 1** | 1-12 | E-Commerce Platform | Core Development |
-| **MCD Level 2** | 13-22 | Banking Gateway | Advanced Development |
-| **MCPA Level 1** | 23-28 | Microservices Orchestrator | Platform Architecture |
-| **MCIA Level 1** | All Levels | Legacy Modernization | Integration Architecture |
+## 💬 Community & Support
 
-## 📞 Support & Community
+<div align="center">
 
-- 💬 **Discussions:** Use GitHub Discussions for questions
-- 🐛 **Issues:** Report bugs via GitHub Issues  
-- 📧 **Email:** [ilyasseyounes1@gamil.com] for direct contact
-- 🌐 **Blog:** [***] for latest updates and tutorials
-- 📱 **Social:** Follow [www.linkedin.com/in/ilyasse-younes] for MuleSoft tips
+[![GitHub Discussions](https://img.shields.io/badge/GitHub-Discussions-333?style=for-the-badge&logo=github)](https://github.com/yourusername/anypoint-studio-mastery/discussions)
+[![Email](https://img.shields.io/badge/Email-Contact-blue?style=for-the-badge&logo=gmail)](mailto:ilyasseyounes1@gmail.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/ilyasse-younes)
+
+**📧 Direct Support:** [ilyasseyounes1@gmail.com](mailto:ilyasseyounes1@gmail.com)<br/>
+**🌐 MuleSoft Community:** [Official Forums](https://forums.mulesoft.com/)<br/>
+**📖 Documentation:** [MuleSoft Docs](https://docs.mulesoft.com/)
+
+</div>
 
 ## 📄 License
 
@@ -319,10 +349,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**⭐ If this helped you learn MuleSoft, please star the repository! ⭐**
+### 🚀 **Ready to Master Anypoint Studio?**
 
-Made with ❤️ for the MuleSoft developer community
+**Choose your path and start building enterprise integrations today!**
 
-[🚀 Get Started](exercises/level-01/) | [🏗️ View Projects](projects/) | [📚 Documentation](resources/) | [🤝 Contribute](CONTRIBUTING.md)
+[![🌱 Start Learning](https://img.shields.io/badge/🌱%20Start%20Learning-Fundamentals-success?style=for-the-badge)](learning-journey/fundamentals/)
+[![🏗️ View Projects](https://img.shields.io/badge/🏗️%20View%20Projects-Integration%20Examples-blue?style=for-the-badge)](projects/)
+[![🛠️ Get Templates](https://img.shields.io/badge/🛠️%20Get%20Templates-Quick%20Start-orange?style=for-the-badge)](templates/)
+
+**⭐ Star this repository to track your Anypoint Studio mastery journey! ⭐**
+
+*Built with ❤️ for the MuleSoft developer community*
 
 </div>
