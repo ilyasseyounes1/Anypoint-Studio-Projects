@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+                          http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+                          http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config">
+        <http:listener-connection host="${http.host}" port="${http.port}"/>
+    </http:listener-config>
+
+    <configuration-properties doc:name="Configuration properties" doc:id="4e371060-75e0-4f38-b692-a18970bbf22a" file="application.yaml" />
+	<flow name="hello-world-main-flow" doc:name="hello-world-main-flow">
+        <http:listener doc:name="Hello World Listener" 
+                      config-ref="HTTP_Listener_config" 
+                      path="/hello/*" 
+                      allowedMethods="GET,POST"/>
+        
+        <choice doc:name="Route Choice">
+            <!-- Basic Hello World -->
+            <when expression='#[attributes.requestPath == "/hello" and attributes.method == "GET"]'>
+                <set-payload value="Hello World from MuleSoft!" doc:name="Set Basic Response"/>
+            </when>
+            
+            <!-- Personalized Greeting -->
+            <when expression='#[attributes.requestPath matches "/hello/[^/]+" and attributes.method == "GET" and not (attributes.requestPath contains "time")]'>
+                <ee:transform doc:name="Personalized Greeting">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var name = (attributes.requestPath splitBy "/")[2]
+---
+"Hello " ++ name ++ "! Welcome to MuleSoft."]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+            </when>
+            
+            <!-- Time-based Greeting -->
+            <when expression='#[attributes.requestPath == "/hello/time" and attributes.method == "GET"]'>
+                <ee:transform doc:name="Time Greeting">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+"Hello! Current time is: " ++ (now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"})]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+            </when>
+            
+            <!-- POST with JSON -->
+            <when expression='#[attributes.requestPath == "/hello" and attributes.method == "POST"]'>
+                <ee:transform doc:name="JSON Response">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    message: "Hello " ++ (payload.name default "Guest") ++ "!",
+    language: payload.language default "English",
+    timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"}
+}]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+            </when>
+            
+            <!-- Default case -->
+            <otherwise>
+                <set-payload value='{"error": "Endpoint not found"}' doc:name="Not Found"/>
+                <set-variable variableName="httpStatus" value="404" doc:name="Set 404 Status"/>
+            </otherwise>
+        </choice>
+        
+        <ee:transform doc:name="Set Content Type">
+            <ee:message>
+                <ee:set-attributes><![CDATA[%dw 2.0
+output application/json
+---
+{
+    headers: {
+        "Content-Type": "application/json"
+    },
+    statusCode: vars.httpStatus default 200
+}]]></ee:set-attributes>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>
