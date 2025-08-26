@@ -12,7 +12,7 @@
         <http:listener-connection host="${http.host}" port="${http.port}"/>
     </http:listener-config>
 
-    <configuration-properties doc:name="Configuration properties" doc:id="4e371060-75e0-4f38-b692-a18970bbf22a" file="application.yaml" />
+    <configuration-properties doc:name="Configuration properties" doc:id="ec4e332e-4f1d-48bd-9964-169b3a7546ff" file="application.yaml" />
 	<flow name="hello-world-main-flow" doc:name="hello-world-main-flow">
         <http:listener doc:name="Hello World Listener" 
                       config-ref="HTTP_Listener_config" 
@@ -25,20 +25,7 @@
                 <set-payload value="Hello World from MuleSoft!" doc:name="Set Basic Response"/>
             </when>
             
-            <!-- Personalized Greeting -->
-            <when expression='#[attributes.requestPath matches "/hello/[^/]+" and attributes.method == "GET" and not (attributes.requestPath contains "time")]'>
-                <ee:transform doc:name="Personalized Greeting">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
-var name = (attributes.requestPath splitBy "/")[2]
----
-"Hello " ++ name ++ "! Welcome to MuleSoft."]]></ee:set-payload>
-                    </ee:message>
-                </ee:transform>
-            </when>
-            
-            <!-- Time-based Greeting -->
+            <!-- Time-based Greeting (check this first to avoid conflicts) -->
             <when expression='#[attributes.requestPath == "/hello/time" and attributes.method == "GET"]'>
                 <ee:transform doc:name="Time Greeting">
                     <ee:message>
@@ -46,6 +33,20 @@ var name = (attributes.requestPath splitBy "/")[2]
 output application/json
 ---
 "Hello! Current time is: " ++ (now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"})]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+            </when>
+            
+            <!-- Personalized Greeting (using correct regex syntax) -->
+            <when expression='#[attributes.requestPath ~= "/hello/.+" and attributes.method == "GET"]'>
+                <ee:transform doc:name="Personalized Greeting">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var pathSegments = attributes.requestPath splitBy "/"
+var name = pathSegments[2]
+---
+"Hello " ++ name ++ "! Welcome to MuleSoft."]]></ee:set-payload>
                     </ee:message>
                 </ee:transform>
             </when>
@@ -76,7 +77,7 @@ output application/json
         <ee:transform doc:name="Set Content Type">
             <ee:message>
                 <ee:set-attributes><![CDATA[%dw 2.0
-output application/json
+output application/java
 ---
 {
     headers: {
