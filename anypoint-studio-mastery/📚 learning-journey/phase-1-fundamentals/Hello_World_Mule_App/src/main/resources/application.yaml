@@ -1,0 +1,7 @@
+http:
+  port: "8081"
+  host: "localhost"
+
+app:
+  name: "Hello World Mule App"
+  version: "1.0.0"
