@@ -1,0 +1,23 @@
+{
+  "id": 1,
+  "name": "Mock User",
+  "username": "mockuser",
+  "email": "mock@example.com",
+  "address": {
+    "street": "Mock Street",
+    "suite": "Suite 123",
+    "city": "Mock City",
+    "zipcode": "12345",
+    "geo": {
+      "lat": "40.7128",
+      "lng": "-74.0060"
+    }
+  },
+  "phone": "555-0123",
+  "website": "mockuser.example.com",
+  "company": {
+    "name": "Mock Company",
+    "catchPhrase": "Mock catch phrase",
+    "bs": "mock business solution"
+  }
+}

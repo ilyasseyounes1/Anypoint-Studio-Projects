@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:batch="http://www.mulesoft.org/schema/mule/ee/batch"
+      xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd 
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+        http://www.mulesoft.org/schema/mule/ee/batch http://www.mulesoft.org/schema/mule/ee/batch/current/mule-batch.xsd
+        http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+
+    <!-- Batch Weather Processing Flow -->
+    <flow name="batch-weather-processing-flow" doc:name="batch-weather-processing-flow">
+        <http:listener doc:name="Batch Weather Listener" 
+                      config-ref="HTTP_Listener_Configuration" 
+                      path="/weather/batch"
+                      allowedMethods="POST"/>
+        
+        <logger level="INFO" doc:name="Log Batch Request" 
+                message="Batch weather processing request received"/>
+        
+        <!-- Validate Input -->
+        <validation:is-not-null value="#[payload.cities]" message="Cities array is required"/>
+        <validation:validate-size value="#[payload.cities]" min="1" max="20" 
+                                 message="Cities array must contain between 1 and 20 cities"/>
+        
+        <set-variable variableName="requestId" value="#[uuid()]" doc:name="Set Request ID"/>
+        <set-variable variableName="startTime" value="#[now()]" doc:name="Set Start Time"/>
+        
+        <batch:job jobName="weatherBatchJob" doc:name="Weather Batch Job">
+            <batch:input>
+                <ee:transform doc:name="Prepare Batch Input">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+payload.cities map {
+    city: $,
+    requestId: vars.requestId
+}]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+            </batch:input>
+            
+            <batch:process-records>
+                <batch:step name="fetchWeatherData" doc:name="Fetch Weather Data">
+                    <set-variable variableName="currentCity" value="#[payload.city]" doc:name="Set Current City"/>
+                    
+                    <try doc:name="Try Weather API Call">
+                        <http:request method="GET" doc:name="Weather API Call" 
+                                     config-ref="HTTP_Listener_Configuration" 
+                                     host="localhost" port="${http.listener.port}"
+                                     path="/weather/{city}"
+                                     responseTimeout="15000">
+                            <http:uri-params><![CDATA[#[{city: vars.currentCity}]]]></http:uri-params>
+                        </http:request>
+                        
+                        <ee:transform doc:name="Process Success">
+                            <ee:message>
+                                <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+    city: vars.currentCity,
+    status: "success",
+    data: payload.data,
+    timestamp: now()
+}]]></ee:set-payload>
+                            </ee:message>
+                        </ee:transform>
+                        
+                        <error-handler>
+                            <on-error-continue enableNotifications="false" logException="true" type="ANY">
+                                <ee:transform doc:name="Process Error">
+                                    <ee:message>
+                                        <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+    city: vars.currentCity,
+    status: "error",
+    error: {
+        message: "Failed to fetch weather data",
+                        details: error.description default "Unknown error"
+                    },
+                    timestamp: now()
+                }]]></ee:set-payload>
+                            </ee:message>
+                        </ee:transform>
+                    </on-error-continue>
+                </error-handler>
+            </try>
+        </batch:step>
+    </batch:process-records>
+    
+    <batch:on-complete>
+        <logger level="INFO" doc:name="Log Batch Complete" 
+                message="Batch processing completed. Success: #[payload.successfulRecords], Failed: #[payload.failedRecords]"/>
+        
+        <ee:transform doc:name="Prepare Batch Results">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    status: "completed",
+    requestId: vars.requestId,
+    summary: {
+        totalCities: payload.totalRecords,
+        successful: payload.successfulRecords,
+        failed: payload.failedRecords,
+        processingTime: (now() - vars.startTime) as String {format: "PTnS"}
+    },
+    results: payload.items,
+    timestamp: now()
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </batch:on-complete>
+</batch:job>
+
+<error-handler>
+    <on-error-continue enableNotifications="true" logException="true" type="VALIDATION:INVALID_SIZE">
+        <ee:transform doc:name="Validation Error Response">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    status: "error",
+    error: {
+        message: "Invalid request format",
+        details: error.description,
+        code: "VALIDATION_ERROR"
+    },
+    timestamp: now()
+}]]></ee:set-payload>
+            </ee:message>
+            <ee:variables>
+                <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+    </on-error-continue>
+    <on-error-continue enableNotifications="true" logException="true" type="ANY">
+        <ee:transform doc:name="General Error Response">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    status: "error",
+    error: {
+        message: "Batch processing failed",
+        details: error.description default "Unknown error",
+        code: "BATCH_PROCESSING_ERROR"
+    },
+    timestamp: now()
+}]]></ee:set-payload>
+            </ee:message>
+            <ee:variables>
+                <ee:set-variable variableName="httpStatus">500</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+    </on-error-continue>
+</error-handler>
+</flow>
+
+</mule>

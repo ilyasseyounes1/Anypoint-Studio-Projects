@@ -1,0 +1,5 @@
+# This can be empty or extended later for more configs
+endpoints:
+  weather: "/weather"
+  news: "/top-headlines"
+  users: "/users"
