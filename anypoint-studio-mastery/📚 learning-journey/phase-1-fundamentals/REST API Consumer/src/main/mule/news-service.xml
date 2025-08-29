@@ -1,156 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core"
-      xmlns:http="http://www.mulesoft.org/schema/mule/http"
-      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="
-        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
-    <!-- News Service Flow -->
-    <flow name="news-service-flow" doc:name="news-service-flow">
-        <http:listener doc:name="News API Listener" 
-                      config-ref="HTTP_Listener_Configuration" 
-                      path="/news/{category}"/>
-        
-        <set-variable variableName="category" value="#[attributes.uriParams.category]" doc:name="Extract Category"/>
-        
-        <logger level="INFO" doc:name="Log Dashboard Request" 
-                message="Dashboard request for city: #[vars.city], category: #[vars.category]"/>
-        
-        <!-- Parallel API Calls using Scatter-Gather -->
-        <scatter-gather doc:name="Gather Weather and News Data" timeout="45000">
-            <route>
-                <logger level="DEBUG" doc:name="Weather Route" message="Calling weather service"/>
-                <flow-ref doc:name="Call Weather Service" name="get-weather-data"/>
-            </route>
-            <route>
-                <logger level="DEBUG" doc:name="News Route" message="Calling news service"/>
-                <flow-ref doc:name="Call News Service" name="get-news-data"/>
-            </route>
-        </scatter-gather>
-        
-        <ee:transform doc:name="Combine Dashboard Data">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
+	<flow name="news-service-flow" doc:id="9f5cc401-27d7-4163-9d64-6a35bd81a297">
+		<logger level="INFO" doc:name="Log Request" message="News service request for category: #[attributes.uriParams.category]" />
+		
+		<set-variable value="#[attributes.uriParams.category]" doc:name="Set Category Variable" variableName="category" />
+		
+		<choice doc:name="Mock Mode Check">
+			<when expression="${app.enableMockMode}">
+				<flow-ref doc:name="Get Mock News Data" name="get-mock-news-flow"/>
+			</when>
+			<otherwise>
+				<flow-ref doc:name="Get Live News Data" name="get-live-news-flow"/>
+			</otherwise>
+		</choice>
+		
+		<ee:transform doc:name="Transform News Response">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var newsData = payload
+---
+{
+	"status": "success",
+	"service": "news",
+	"category": vars.category,
+	"timestamp": now() as String,
+	"data": {
+		"totalResults": newsData.totalResults,
+		"articles": newsData.articles map (article, index) -> {
+			"id": index + 1,
+			"title": article.title,
+			"description": article.description,
+			"author": article.author,
+			"source": article.source.name,
+			"url": article.url,
+			"publishedAt": article.publishedAt,
+			"imageUrl": article.urlToImage
+		}
+	},
+	"mockMode": ${app.enableMockMode}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		
+		<error-handler>
+			<on-error-continue type="ANY" doc:name="News Service Error">
+				<logger level="ERROR" doc:name="Log Error" message="News service error: #[error.description]" />
+				<ee:transform doc:name="Error Response">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
-    status: "success",
-    service: "dashboard",
-    timestamp: now(),
-    location: {
-        city: vars.city,
-        newsCategory: vars.category
-    },
-    data: {
-        weather: payload[0].payload.data,
-        news: {
-            category: payload[1].payload.category,
-            articles: payload[1].payload.data.articles[0 to 4], // Top 5 articles
-            totalAvailable: payload[1].payload.data.totalResults
-        },
-        summary: {
-            temperature: payload[0].payload.data.temperature.current ++ "°C",
-            weatherCondition: payload[0].payload.data.weather.description,
-            topNewsTitle: payload[1].payload.data.articles[0].title,
-            newsCount: sizeOf(payload[1].payload.data.articles)
-        }
-    },
-    metadata: {
-        weatherSource: if(payload[0].payload.mockMode) "mock" else "openweathermap",
-        newsSource: if(payload[1].payload.mockMode) "mock" else "newsapi",
-        generatedAt: now(),
-        cacheEnabled: false
-    }
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-        
-        <logger level="INFO" doc:name="Log Dashboard Success" 
-                message="Dashboard data compiled successfully for #[vars.city]"/>
-        
-        <error-handler>
-            <on-error-continue enableNotifications="true" logException="true" type="SCATTER_GATHER:COMPOSITE_ROUTING">
-                <ee:transform doc:name="Handle Partial Failures">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
-var successfulRoutes = payload filter ($.successful == true)
-var failedRoutes = payload filter ($.successful == false)
----
-{
-    status: "partial_success",
-    service: "dashboard",
-    timestamp: now(),
-    location: {
-        city: vars.city,
-        newsCategory: vars.category
-    },
-    data: {
-        weather: if(sizeOf(successfulRoutes filter ($.routeIndex == 0)) > 0) 
-                    successfulRoutes[0].payload.data 
-                 else { error: "Weather service unavailable" },
-        news: if(sizeOf(successfulRoutes filter ($.routeIndex == 1)) > 0) 
-                 successfulRoutes[0].payload.data 
-              else { error: "News service unavailable" }
-    },
-    errors: failedRoutes map {
-        service: if($.routeIndex == 0) "weather" else "news",
-        error: $.errorMessage
-    }
-}]]></ee:set-payload>
-                    </ee:message>
-                </ee:transform>
-            </on-error-continue>
-            <on-error-continue enableNotifications="true" logException="true" type="ANY">
-                <ee:transform doc:name="Dashboard Error Response">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-    status: "error",
-    service: "dashboard",
-    timestamp: now(),
-    location: {
-        city: vars.city,
-        newsCategory: vars.category
-    },
-    error: {
-        message: "Failed to retrieve dashboard data",
-        details: error.description default "Unknown error",
-        code: "DASHBOARD_SERVICE_ERROR"
-    }
-}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">500</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-continue>
-        </error-handler>
-    </flow>
-
-    <!-- Get Weather Data Sub-flow -->
-    <sub-flow name="get-weather-data" doc:name="get-weather-data">
-        <http:request method="GET" doc:name="Internal Weather Request" 
-                     config-ref="HTTP_Listener_Configuration" 
-                     host="localhost" port="${http.listener.port}"
-                     path="/weather/{city}">
-            <http:uri-params><![CDATA[#[{city: vars.city}]]]></http:uri-params>
-        </http:request>
-    </sub-flow>
-
-    <!-- Get News Data Sub-flow -->
-    <sub-flow name="get-news-data" doc:name="get-news-data">
-        <http:request method="GET" doc:name="Internal News Request" 
-                     config-ref="HTTP_Listener_Configuration" 
-                     host="localhost" port="${http.listener.port}"
-                     path="/news/{category}">
-            <http:uri-params><![CDATA[#[{category: vars.category}]]]></http:uri-params>
-        </http:request>
-    </sub-flow>
-
-</mule>
+	"status":

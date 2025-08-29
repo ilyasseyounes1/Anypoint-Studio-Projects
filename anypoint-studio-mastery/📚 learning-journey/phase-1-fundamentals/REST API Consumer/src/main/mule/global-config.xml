@@ -1,49 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core"
-      xmlns:http="http://www.mulesoft.org/schema/mule/http"
-      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="
-        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-        http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <!-- HTTP Listener Configuration -->
-    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener config">
-        <http:listener-connection host="${http.listener.host}" port="${http.listener.port}"/>
-    </http:listener-config>
-
-    <!-- OpenWeatherMap API Configuration -->
-    <http:request-config name="OpenWeather_HTTP_Request_Config" doc:name="HTTP Request configuration">
-        <http:request-connection protocol="${apis.openweather.protocol}" 
-                               host="${apis.openweather.host}" 
-                               port="${apis.openweather.port}">
-            <tls:context>
-                <tls:trust-store insecure="true"/>
-            </tls:context>
-        </http:request-connection>
-    </http:request-config>
-
-    <!-- NewsAPI Configuration -->
-    <http:request-config name="NewsAPI_HTTP_Request_Config" doc:name="HTTP Request configuration">
-        <http:request-connection protocol="${apis.newsapi.protocol}" 
-                               host="${apis.newsapi.host}" 
-                               port="${apis.newsapi.port}">
-            <tls:context>
-                <tls:trust-store insecure="true"/>
-            </tls:context>
-        </http:request-connection>
-    </http:request-config>
-
-    <!-- JSONPlaceholder Configuration -->
-    <http:request-config name="JSONPlaceholder_HTTP_Request_Config" doc:name="HTTP Request configuration">
-        <http:request-connection protocol="${apis.jsonplaceholder.protocol}" 
-                               host="${apis.jsonplaceholder.host}" 
-                               port="${apis.jsonplaceholder.port}">
-            <tls:context>
-                <tls:trust-store insecure="true"/>
-            </tls:context>
-        </http:request-connection>
-    </http:request-config>
+	<!-- HTTP Listener Configuration -->
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config">
+		<http:listener-connection host="${http.listener.host}" port="${http.listener.port}" />
+	</http:listener-config>
+	
+	<!-- OpenWeatherMap HTTP Request Configuration -->
+	<http:request-config name="OpenWeatherMap_HTTP_Request_config" doc:name="OpenWeatherMap HTTP Request config">
+		<http:request-connection host="${apis.openweather.host}" port="${apis.openweather.port}" protocol="${apis.openweather.protocol}"/>
+	</http:request-config>
+	
+	<!-- NewsAPI HTTP Request Configuration -->
+	<http:request-config name="NewsAPI_HTTP_Request_config" doc:name="NewsAPI HTTP Request config">
+		<http:request-connection host="${apis.newsapi.host}" port="${apis.newsapi.port}" protocol="${apis.newsapi.protocol}"/>
+	</http:request-config>
+	
+	<!-- JSONPlaceholder HTTP Request Configuration -->
+	<http:request-config name="JSONPlaceholder_HTTP_Request_config" doc:name="JSONPlaceholder HTTP Request config">
+		<http:request-connection host="${apis.jsonplaceholder.host}" port="${apis.jsonplaceholder.port}" protocol="${apis.jsonplaceholder.protocol}"/>
+	</http:request-config>
+	
+	<!-- Configuration Properties -->
+	<configuration-properties doc:name="Configuration properties" file="application.yaml" />
+	<configuration-properties doc:name="Secure Configuration properties" file="secure.yaml" />
 
 </mule>

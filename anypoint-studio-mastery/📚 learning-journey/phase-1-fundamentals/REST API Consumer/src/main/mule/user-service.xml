@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+	<flow name="user-service-flow" doc:id="4c2307c4-734a-463f-96d3-ae9399f0202c">
+		<logger level="INFO" doc:name="Log Request" message="User service request for ID: #[attributes.uriParams.id]" />
+		
+		<set-variable value="#[attributes.uriParams.id]" doc:name="Set User ID Variable" variableName="userId" />
+		
+		<choice doc:name="Mock Mode Check">
+			<when expression="${app.enableMockMode}">
+				<flow-ref doc:name="Get Mock User Data" name="get-mock-user-flow"/>
+			</when>
+			<otherwise>
+				<flow-ref doc:name="Get Live User Data" name="get-live-user-flow"/>
+			</otherwise>
+		</choice>
+		
+		<ee:transform doc:name="Transform User Response">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var userData = payload
+---
+{
+	"status": "success",
+	"service": "user",
+	"userId": vars.userId,
+	"timestamp": now() as String,
+	"data": {
+		"id": userData.id,
+		"profile": {
+			"name": userData.name,
+			"username": userData.username,
+			"email": userData.email,
+			"phone": userData.phone,
+			"website": userData.website
+		},
+		"address": {
+			"street": userData.address.street ++ " " ++ userData.address.suite,
+			"city": userData.address.city,
+			"zipcode": userData.address.zipcode,
+			"coordinates": {
+				"lat": userData.address.geo.lat,
+				"lng": userData.address.geo.lng
+			}
+		},
+		"company": {
+			"name": userData.company.name,
+			"catchPhrase": userData.company.catchPhrase,
+			"businessStrategy": userData.company.bs
+		}
+	},
+	"mockMode": ${app.enableMockMode}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		
+		<error-handler>
+			<on-error-continue type="ANY" doc:name="User Service Error">
+				<logger level="ERROR" doc:name="Log Error" message="User service error: #[error.description]" />
+				<ee:transform doc:name="Error Response">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": "error",
+	"service": "user",
+	"userId": vars.userId,
+	"timestamp": now() as String,
+	"error": {
+		"type": error.errorType.identifier,
+		"description": "Unable to retrieve user data",
+		"details": error.description
+	},
+	"mockMode": ${app.enableMockMode}
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:message>
+						<ee:set-attributes><![CDATA[%dw 2.0
+output application/java
+---
+{
+	statusCode: 500
+}]]></ee:set-attributes>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+
+	<flow name="get-live-user-flow" doc:id="c4de0b6f-80da-4b7d-aba3-998c62fb2444">
+		<http:request method="GET" doc:name="Call JSONPlaceholder API" config-ref="JSONPlaceholder_HTTP_Request_config" 
+			path="${apis.jsonplaceholder.basePath}/users/#[vars.userId]" responseTimeout="${apis.jsonplaceholder.timeout}">
+		</http:request>
+	</flow>
+
+</mule>

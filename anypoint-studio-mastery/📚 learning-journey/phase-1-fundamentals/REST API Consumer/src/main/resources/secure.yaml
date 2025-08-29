@@ -1,6 +1,0 @@
-secure:
-  openweather:
-    api:
-      key: "your_openweather_api_key_here"
-  newsapi:
-    key: "your_newsapi_key_here"

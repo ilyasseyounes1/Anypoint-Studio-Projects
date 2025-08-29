@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+	<flow name="weather-service-flow" doc:id="de1b8b6a-1ecf-4449-87e1-24b99b1def66">
+		<logger level="INFO" doc:name="Log Request" message="Weather service request for city: #[attributes.uriParams.city]" />
+		
+		<set-variable value="#[attributes.uriParams.city]" doc:name="Set City Variable" variableName="city" />
+		
+		<choice doc:name="Mock Mode Check">
+			<when expression="${app.enableMockMode}">
+				<flow-ref doc:name="Get Mock Weather Data" name="get-mock-weather-flow"/>
+			</when>
+			<otherwise>
+				<flow-ref doc:name="Get Live Weather Data" name="get-live-weather-flow"/>
+			</otherwise>
+		</choice>
+		
+		<ee:transform doc:name="Transform Weather Response">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var weatherData = payload
+---
+{
+	"status": "success",
+	"service": "weather",
+	"city": vars.city,
+	"timestamp": now() as String,
+	"data": {
+		"temperature": {
+			"current": weatherData.main.temp,
+			"feelsLike": weatherData.main.feels_like,
+			"min": weatherData.main.temp_min,
+			"max": weatherData.main.temp_max,
+			"unit": "celsius"
+		},
+		"weather": {
+			"main": weatherData.weather[0].main,
+			"description": weatherData.weather[0].description,
+			"icon": weatherData.weather[0].icon
+		},
+		"atmosphere": {
+			"pressure": weatherData.main.pressure,
+			"humidity": weatherData.main.humidity
+		},
+		"wind": {
+			"speed": weatherData.wind.speed default 0,
+			"direction": weatherData.wind.deg default 0
+		},
+		"location": {
+			"name": weatherData.name,
+			"country": weatherData.sys.country default weatherData.country default "N/A"
+		}
+	},
+	"mockMode": ${app.enableMockMode}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		
+		<error-handler>
+			<on-error-continue type="ANY" doc:name="Weather Service Error">
+				<logger level="ERROR" doc:name="Log Error" message="Weather service error: #[error.description]" />
+				<ee:transform doc:name="Error Response">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": "error",
+	"service": "news",
+	"category": vars.category,
+	"timestamp": now() as String,
+	"error": {
+		"type": error.errorType.identifier,
+		"description": "Unable to retrieve news data",
+		"details": error.description
+	},
+	"mockMode": ${app.enableMockMode}
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:message>
+						<ee:set-attributes><![CDATA[%dw 2.0
+output application/java
+---
+{
+	statusCode: 500
+}]]></ee:set-attributes>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+
+	<flow name="get-live-news-flow" doc:id="249c394d-c829-40b1-a0de-8c069403e325">
+		<http:request method="GET" doc:name="Call NewsAPI" config-ref="NewsAPI_HTTP_Request_config" 
+			path="${apis.newsapi.basePath}/top-headlines" responseTimeout="${apis.newsapi.timeout}">
+			<http:headers><![CDATA[#[{
+				"X-API-Key": "${apis.newsapi.key}"
+			}]]]></http:headers>
+			<http:query-params><![CDATA[#[{
+				"category": vars.category,
+				"country": "us",
+				"pageSize": 10
+			}]]]></http:query-params>
+		</http:request>
+	</flow>
+
+</mule>
