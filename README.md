@@ -97,8 +97,8 @@ anypoint-studio-mastery/
 
 | Week | 🎯 Focus | 🛠️ Skills | 📋 Deliverables |
 |------|----------|-----------|------------------|
-| 1 | Studio Basics | IDE navigation, project structure | Hello World Mule App |
-| 2 | HTTP & Core | HTTP listener/request, transforms | REST API consumer |
+| 1 | Studio Basics | IDE navigation, project structure |[Hello World Mule App](anypoint-studio-mastery/📚%20learning-journey/phase-1-fundamentals/Hello_World_Mule_App/) |
+| 2 | HTTP & Core | HTTP listener/request, transforms | [REST API Consumer](anypoint-studio-mastery/📚%20learning-journey/phase-1-fundamentals/REST_API_Consumer/) | |
 | 3 | File Operations | File connector, batch processing | CSV to JSON converter |
 | 4 | Error Handling | Try/catch, error types | Robust error handling flow |
 

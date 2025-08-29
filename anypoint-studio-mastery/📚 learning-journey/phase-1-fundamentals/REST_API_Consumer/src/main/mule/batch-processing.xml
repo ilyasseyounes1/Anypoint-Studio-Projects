@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+
+	<flow name="batch-processing-flow" doc:id="bd22f503-cd45-4812-b359-dbd415876bde">
+		<logger level="INFO" doc:name="Log Batch Request" message="Batch weather processing initiated" />
+		
+		<set-variable value="#[uuid()]" doc:name="Set Request ID" variableName="requestId" />
+		<set-variable value="#[now()]" doc:name="Set Start Time" variableName="startTime" />
+		
+		<ee:transform doc:name="Validate Request">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+if (payload.cities != null and sizeOf(payload.cities) > 0)
+	payload.cities
+else
+	error("Invalid request: cities array is required and must not be empty")]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		
+		<batch:job jobName="weather-batch-job" doc:id="48d18a6c-f45b-42ab-9163-d0f775e67806">
+			<batch:input>
+				<ee:transform doc:name="Prepare Cities for Batch">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+	city: $,
+	requestId: vars.requestId
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</batch:input>
+			
+			<batch:process-records maxConcurrency="${batch.maxConcurrency}">
+				<batch:step name="process-weather-step" doc:id="bf2f1422-67d4-440b-9df1-4d0cf34b8cc7">
+					<set-variable value="#[payload.city]" doc:name="Set Current City" variableName="currentCity" />
+					
+					<logger level="DEBUG" doc:name="Log Processing" message="Processing weather for city: #[vars.currentCity]" />
+					
+					<choice doc:name="Mock Mode Check">
+						<when expression="${app.enableMockMode}">
+							<flow-ref doc:name="Get Mock Weather Data" name="get-mock-weather-flow"/>
+						</when>
+						<otherwise>
+							<flow-ref doc:name="Get Live Weather Data" name="get-live-weather-flow"/>
+						</otherwise>
+					</choice>
+					
+					<ee:transform doc:name="Transform Batch Item">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	city: vars.currentCity,
+	status: "success",
+	data: {
+		temperature: {
+			current: payload.main.temp,
+			feelsLike: payload.main.feels_like,
+			min: payload.main.temp_min,
+			max: payload.main.temp_max
+		},
+		weather: {
+			main: payload.weather[0].main,
+			description: payload.weather[0].description
+		},
+		location: {
+			name: payload.name,
+			country: payload.sys.country default payload.country default "N/A"
+		}
+	},
+	timestamp: now() as String
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</batch:step>
+			</batch:process-records>
+			
+			<batch:on-complete>
+				<logger level="INFO" doc:name="Log Batch Complete" message="Batch processing completed. Successful: #[batchJobResult.successfulRecords], Failed: #[batchJobResult.failedRecords]" />
+				
+				<ee:transform doc:name="Build Batch Response">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var processingTime = (now() - vars.startTime)
+---
+{
+	status: "completed",
+	requestId: vars.requestId,
+	summary: {
+		totalCities: batchJobResult.totalRecords,
+		successful: batchJobResult.successfulRecords,
+		failed: batchJobResult.failedRecords,
+		processingTime: processingTime as String
+	},
+	results: payload,
+	timestamp: now() as String
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</batch:on-complete>
+		</batch:job>
+		
+		<error-handler>
+			<on-error-continue type="ANY" doc:name="Batch Processing Error">
+				<logger level="ERROR" doc:name="Log Batch Error" message="Batch processing error: #[error.description]" />
+				<ee:transform doc:name="Batch Error Response">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "error",
+	requestId: vars.requestId,
+	timestamp: now() as String,
+	error: {
+		type: error.errorType.identifier,
+		description: "Batch processing failed",
+		details: error.description
+	}
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:message>
+						<ee:set-attributes><![CDATA[%dw 2.0
+output application/java
+---
+{
+	statusCode: 500
+}]]></ee:set-attributes>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+
+</mule>
+``` "error",
+	"service": "weather",
+	"city": vars.city,
+	"timestamp": now() as String,
+	"error": {
+		"type": error.errorType.identifier,
+		"description": "Unable to retrieve weather data",
+		"details": error.description
+	},
+	"mockMode": ${app.enableMockMode}
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:message>
+						<ee:set-attributes><![CDATA[%dw 2.0
+output application/java
+---
+{
+	statusCode: 500
+}]]></ee:set-attributes>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+
+	<flow name="get-live-weather-flow" doc:id="e91c2020-e4d6-4414-9d8a-5550ab0a1c51">
+		<http:request method="GET" doc:name="Call OpenWeatherMap API" config-ref="OpenWeatherMap_HTTP_Request_config" 
+			path="${apis.openweather.basePath}/weather" responseTimeout="${apis.openweather.timeout}">
+			<http:query-params><![CDATA[#[{
+				"q": vars.city,
+				"appid": "${apis.openweather.apiKey}",
+				"units": "metric"
+			}]]]></http:query-params>
+		</http:request>
+	</flow>
+
+</mule>

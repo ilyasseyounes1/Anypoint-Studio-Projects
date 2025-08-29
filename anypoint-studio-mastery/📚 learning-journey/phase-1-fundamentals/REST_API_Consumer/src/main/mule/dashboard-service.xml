@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+	<flow name="dashboard-service-flow" doc:id="01026be3-a74b-48bd-bf19-5a235f5725d1">
+		<logger level="INFO" doc:name="Log Request" message="Dashboard request for city: #[attributes.uriParams.city], category: #[attributes.uriParams.category]" />
+		
+		<set-variable value="#[attributes.uriParams.city]" doc:name="Set City Variable" variableName="city" />
+		<set-variable value="#[attributes.uriParams.category]" doc:name="Set Category Variable" variableName="category" />
+		
+		<scatter-gather doc:name="Parallel Data Fetch">
+			<route>
+				<logger level="DEBUG" doc:name="Fetching Weather Data" message="Fetching weather data for: #[vars.city]" />
+				<choice doc:name="Weather Mock Mode Check">
+					<when expression="${app.enableMockMode}">
+						<flow-ref doc:name="Get Mock Weather Data" name="get-mock-weather-flow"/>
+					</when>
+					<otherwise>
+						<flow-ref doc:name="Get Live Weather Data" name="get-live-weather-flow"/>
+					</otherwise>
+				</choice>
+			</route>
+			<route>
+				<logger level="DEBUG" doc:name="Fetching News Data" message="Fetching news data for: #[vars.category]" />
+				<choice doc:name="News Mock Mode Check">
+					<when expression="${app.enableMockMode}">
+						<flow-ref doc:name="Get Mock News Data" name="get-mock-news-flow"/>
+					</when>
+					<otherwise>
+						<flow-ref doc:name="Get Live News Data" name="get-live-news-flow"/>
+					</otherwise>
+				</choice>
+			</route>
+		</scatter-gather>
+		
+		<ee:transform doc:name="Transform Dashboard Response">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var weatherData = payload[0]
+var newsData = payload[1]
+---
+{
+	"status": "success",
+	"service": "dashboard",
+	"timestamp": now() as String,
+	"location": {
+		"city": vars.city,
+		"newsCategory": vars.category
+	},
+	"data": {
+		"weather": {
+			"temperature": {
+				"current": weatherData.main.temp,
+				"feelsLike": weatherData.main.feels_like,
+				"min": weatherData.main.temp_min,
+				"max": weatherData.main.temp_max
+			},
+			"condition": {
+				"main": weatherData.weather[0].main,
+				"description": weatherData.weather[0].description,
+				"icon": weatherData.weather[0].icon
+			},
+			"atmosphere": {
+				"pressure": weatherData.main.pressure,
+				"humidity": weatherData.main.humidity
+			},
+			"wind": {
+				"speed": weatherData.wind.speed default 0,
+				"direction": weatherData.wind.deg default 0
+			}
+		},
+		"news": {
+			"category": vars.category,
+			"articles": (newsData.articles[0 to 4]) map (article, index) -> {
+				"id": index + 1,
+				"title": article.title,
+				"description": article.description,
+				"author": article.author,
+				"source": article.source.name,
+				"publishedAt": article.publishedAt
+			},
+			"totalAvailable": newsData.totalResults
+		},
+		"summary": {
+			"temperature": weatherData.main.temp ++ "°C",
+			"weatherCondition": weatherData.weather[0].description,
+			"topNewsTitle": newsData.articles[0].title,
+			"newsCount": sizeOf(newsData.articles[0 to 4])
+		}
+	},
+	"metadata": {
+		"weatherSource": if (${app.enableMockMode}) "mock" else "openweathermap",
+		"newsSource": if (${app.enableMockMode}) "mock" else "newsapi",
+		"generatedAt": now() as String
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		
+		<error-handler>
+			<on-error-continue type="ANY" doc:name="Dashboard Service Error">
+				<logger level="ERROR" doc:name="Log Error" message="Dashboard service error: #[error.description]" />
+				<ee:transform doc:name="Error Response">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": "error",
+	"service": "dashboard",
+	"timestamp": now() as String,
+	"location": {
+		"city": vars.city,
+		"newsCategory": vars.category
+	},
+	"error": {
+		"type": error.errorType.identifier,
+		"description": "Unable to retrieve dashboard data",
+		"details": error.description
+	},
+	"mockMode": ${app.enableMockMode}
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:message>
+						<ee:set-attributes><![CDATA[%dw 2.0
+output application/java
+---
+{
+	statusCode: 500
+}]]></ee:set-attributes>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+
+</mule>

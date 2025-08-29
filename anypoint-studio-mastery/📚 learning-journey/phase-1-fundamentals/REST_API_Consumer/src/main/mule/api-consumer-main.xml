@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+	<!-- Welcome Flow -->
+	<flow name="welcome-flow" doc:id="4c863cf3-7cbb-4507-95b4-6a4e7c7d73c8">
+		<http:listener doc:name="GET /" config-ref="HTTP_Listener_config" path="/" allowedMethods="GET"/>
+		<set-payload value='#[{
+			"message": "Welcome to Weather &amp; News Aggregator API",
+			"version": "${app.version}",
+			"mockMode": ${app.enableMockMode},
+			"endpoints": {
+				"weather": "/weather/{city}",
+				"news": "/news/{category}",
+				"users": "/users/{id}",
+				"dashboard": "/dashboard/{city}/{category}",
+				"batch": "/weather/batch",
+				"health": "/health"
+			},
+			"timestamp": now() as String
+		}]' doc:name="Set Welcome Payload" />
+		<set-property propertyName="Content-Type" value="application/json" doc:name="Set Content Type" />
+	</flow>
+
+	<!-- Health Check Flow -->
+	<flow name="health-check-flow" doc:id="7893e69f-3cfd-49b2-853b-6ebfb9aa6628">
+		<http:listener doc:name="GET /health" config-ref="HTTP_Listener_config" path="/health" allowedMethods="GET"/>
+		<set-payload value='#[{
+			"status": "UP",
+			"application": "${app.name}",
+			"version": "${app.version}",
+			"mockMode": ${app.enableMockMode},
+			"timestamp": now() as String,
+			"checks": {
+				"http": "UP",
+				"configuration": "UP",
+				"mockData": "UP"
+			}
+		}]' doc:name="Set Health Payload" />
+		<set-property propertyName="Content-Type" value="application/json" doc:name="Set Content Type" />
+	</flow>
+
+	<!-- Weather Service Route -->
+	<flow name="weather-route-flow" doc:id="2b0c5a39-dc36-4bd7-ab35-52f9b1d48f46">
+		<http:listener doc:name="GET /weather/{city}" config-ref="HTTP_Listener_config" path="/weather/{city}" allowedMethods="GET"/>
+		<flow-ref doc:name="Call Weather Service" name="weather-service-flow"/>
+	</flow>
+
+	<!-- News Service Route -->
+	<flow name="news-route-flow" doc:id="b4103cfd-dd8b-4478-b1a5-0e5a7475767d">
+		<http:listener doc:name="GET /news/{category}" config-ref="HTTP_Listener_config" path="/news/{category}" allowedMethods="GET"/>
+		<flow-ref doc:name="Call News Service" name="news-service-flow"/>
+	</flow>
+
+	<!-- User Service Route -->
+	<flow name="user-route-flow" doc:id="5e13b715-399f-4603-935c-41a44ff3ef0e">
+		<http:listener doc:name="GET /users/{id}" config-ref="HTTP_Listener_config" path="/users/{id}" allowedMethods="GET"/>
+		<flow-ref doc:name="Call User Service" name="user-service-flow"/>
+	</flow>
+
+	<!-- Dashboard Service Route -->
+	<flow name="dashboard-route-flow" doc:id="4f785b98-e55a-4f61-a97b-1ceeef9395c3">
+		<http:listener doc:name="GET /dashboard/{city}/{category}" config-ref="HTTP_Listener_config" path="/dashboard/{city}/{category}" allowedMethods="GET"/>
+		<flow-ref doc:name="Call Dashboard Service" name="dashboard-service-flow"/>
+	</flow>
+
+	<!-- Batch Processing Route -->
+	<flow name="batch-route-flow" doc:id="1b5797fe-3bf5-4f22-836d-3cdef5cda846">
+		<http:listener doc:name="POST /weather/batch" config-ref="HTTP_Listener_config" path="/weather/batch" allowedMethods="POST"/>
+		<flow-ref doc:name="Call Batch Service" name="batch-processing-flow"/>
+	</flow>
+
+</mule>

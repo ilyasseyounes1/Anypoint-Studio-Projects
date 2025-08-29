@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+	<flow name="news-service-flow" doc:id="9f5cc401-27d7-4163-9d64-6a35bd81a297">
+		<logger level="INFO" doc:name="Log Request" message="News service request for category: #[attributes.uriParams.category]" />
+		
+		<set-variable value="#[attributes.uriParams.category]" doc:name="Set Category Variable" variableName="category" />
+		
+		<choice doc:name="Mock Mode Check">
+			<when expression="${app.enableMockMode}">
+				<flow-ref doc:name="Get Mock News Data" name="get-mock-news-flow"/>
+			</when>
+			<otherwise>
+				<flow-ref doc:name="Get Live News Data" name="get-live-news-flow"/>
+			</otherwise>
+		</choice>
+		
+		<ee:transform doc:name="Transform News Response">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var newsData = payload
+---
+{
+	"status": "success",
+	"service": "news",
+	"category": vars.category,
+	"timestamp": now() as String,
+	"data": {
+		"totalResults": newsData.totalResults,
+		"articles": newsData.articles map (article, index) -> {
+			"id": index + 1,
+			"title": article.title,
+			"description": article.description,
+			"author": article.author,
+			"source": article.source.name,
+			"url": article.url,
+			"publishedAt": article.publishedAt,
+			"imageUrl": article.urlToImage
+		}
+	},
+	"mockMode": ${app.enableMockMode}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		
+		<error-handler>
+			<on-error-continue type="ANY" doc:name="News Service Error">
+				<logger level="ERROR" doc:name="Log Error" message="News service error: #[error.description]" />
+				<ee:transform doc:name="Error Response">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status":
